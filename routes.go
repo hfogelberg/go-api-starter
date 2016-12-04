@@ -2,6 +2,18 @@ package main
 
 var routes = Routes{
 	Route{
+		"Signup",
+		"POST",
+		"/api/signup",
+		Signup
+	},
+	Route{
+		"Login",
+		"POST",
+		"/api/login",
+		Login
+	}
+	Route{
 		"Notes",
 		"GET",
 		"/api/notes",
