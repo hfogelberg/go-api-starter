@@ -10,4 +10,5 @@ $ go run
 ````
 
 ## Todo
+- Add Mongo Db
 - Add JWT authentication

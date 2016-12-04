@@ -16,7 +16,7 @@ var routes = Routes{
 	Route{
 		"Create",
 		"POST",
-		"/api/create",
+		"/api/notes",
 		CreateNote,
 	},
 	Route{
