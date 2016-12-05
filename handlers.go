@@ -31,6 +31,12 @@ type User struct {
 	HashedPassword []byte
 }
 
+type Retval struct {
+	Status  int    `json:status`
+	Message string `json:message`
+	Token   string `json:token`
+}
+
 type Notes []Note
 
 func Signup(w http.ResponseWriter, r *http.Request) {
@@ -75,13 +81,33 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Println("Insert OK")
 
-		// Generat and return token
 		token := createToken(username)
 		log.Println("We have a token!", token)
 
+		ret := Retval{
+			Status:  100,
+			Token:   token,
+			Message: "OK",
+		}
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(ret); err != nil {
+			panic(err)
+		}
+
 	} else {
+		ret := Retval{
+			Status:  -100,
+			Message: "Unauthorized",
+		}
+
 		// There's aleady a user wth the email address
-		log.Println("The user already exists")
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnauthorized)
+		if err := json.NewEncoder(w).Encode(ret); err != nil {
+			panic(err)
+		}
 	}
 }
 
