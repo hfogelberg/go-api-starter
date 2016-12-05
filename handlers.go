@@ -6,12 +6,13 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"time"
 
-	mgo "gopkg.in/mgo.v2"
-
-	"golang.org/x/crypto/bcrypt"
-
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Note struct {
@@ -19,10 +20,15 @@ type Note struct {
 	Text  string `json:"text"'`
 }
 
+type JwtClaims struct {
+	Username string `json:"username"`
+	jwt.StandardClaims
+}
+
 type User struct {
-	Email    string
-	Username string
-	Password []byte
+	Email          string
+	Username       string
+	HashedPassword []byte
 }
 
 type Notes []Note
@@ -38,30 +44,66 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	username := r.Form["username"][0]
 	password := r.Form["password"][0]
 
-	// Encrypt password
-	pwd := []byte(password)
-	hashedPassword, err := bcrypt.GenerateFromPassword(pwd, 10)
-	log.Println("Hashed password", reflect.TypeOf(hashedPassword))
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("The hashed password is : %s\n", string(hashedPassword))
-
-	// Create user in Db
 	session, err := mgo.Dial("mongodb://localhost:27017")
 	if err != nil {
 		panic(err)
 	}
 
 	defer session.Close()
+
+	// Check if user already exists
 	connection := session.DB("test").C("gousers")
-	err2 := connection.Insert(&User{email, username, hashedPassword})
-	if err2 != nil {
-		panic(err2)
+	user := User{}
+	err = connection.Find(bson.M{"email": email}).One(&user)
+	if user.Email == "" {
+		// Add new user to Db
+		// Encrypt password
+		pwd := []byte(password)
+		hashedPassword, err := bcrypt.GenerateFromPassword(pwd, 10)
+		log.Println("Hashed password", reflect.TypeOf(hashedPassword))
+		if err != nil {
+			panic(err)
+		}
+
+		log.Printf("The hashed password is : %s\n", string(hashedPassword))
+		log.Println("Type of Hashed password", reflect.TypeOf(hashedPassword))
+		log.Println("Before insert")
+		connection := session.DB("test").C("gousers")
+		err2 := connection.Insert(&User{email, username, hashedPassword})
+		if err2 != nil {
+			log.Println("Error saveing to Db", err2)
+		}
+		log.Println("Insert OK")
+
+		// Generat and return token
+		token := createToken(username)
+		log.Println("We have a token!", token)
+
+	} else {
+		// There's aleady a user wth the email address
+		log.Println("The user already exists")
+	}
+}
+
+func createToken(username string) string {
+	expireToken := time.Now().Add(time.Minute * 1).Unix()
+
+	claims := JwtClaims{
+		username,
+		jwt.StandardClaims{
+			ExpiresAt: expireToken,
+			Issuer:    "localhost:3000",
+		},
 	}
 
-	// Generat and return token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(hmacSampleSecret)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return tokenString
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
