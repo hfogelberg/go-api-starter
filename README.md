@@ -33,3 +33,22 @@ http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Bat
 ### Log in
 
 ### Log out
+
+### Change username
+
+### Remove user
+
+### Get Notes by username
+
+### Get notes by Id
+
+### Update note
+
+### Todo
+- Clean up! The code is a mess today
+- Make DRY
+- Status codes as constants
+- Settings in seperate file
+- Structs (models) in seperate file
+- Log HTTP callse
+- Move JWT to own package?

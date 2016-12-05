@@ -52,7 +52,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	session, err := mgo.Dial("mongodb://localhost:27017")
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	defer session.Close()
@@ -60,7 +61,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	// Check if user already exists
 	connection := session.DB("test").C("gousers")
 	user := User{}
-	err = connection.Find(bson.M{"email": email}).One(&user)
+	err = connection.Find(bson.M{"username": username}).One(&user)
 	if user.Email == "" {
 		// Add new user to Db
 		// Encrypt password
@@ -68,7 +69,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		hashedPassword, err := bcrypt.GenerateFromPassword(pwd, 10)
 		log.Println("Hashed password", reflect.TypeOf(hashedPassword))
 		if err != nil {
-			panic(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		log.Printf("The hashed password is : %s\n", string(hashedPassword))
@@ -134,6 +136,70 @@ func createToken(username string) string {
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Login")
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	username := r.Form["username"][0]
+	password := r.Form["password"][0]
+
+	// Check if user exists in Db
+	session, err := mgo.Dial("mongodb://localhost:27017")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer session.Close()
+
+	connection := session.DB("test").C("gousers")
+	user := User{}
+	err = connection.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Println("Passord in Db", user.HashedPassword)
+	if user.Email != "" {
+		// Compare to password in Db
+		pwd := []byte(password)
+		err = bcrypt.CompareHashAndPassword(user.HashedPassword, pwd)
+		fmt.Println(err) // nil means it is a match
+		if err == nil {
+			// Password OK. Generate token
+			log.Println("Password is OK, Time to generate token")
+			token := createToken(username)
+			log.Println("We have a token!", token)
+
+			ret := Retval{
+				Status:  100,
+				Token:   token,
+				Message: "OK",
+			}
+
+			log.Println("Returning token")
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+			if err := json.NewEncoder(w).Encode(ret); err != nil {
+				panic(err)
+			}
+
+		} else {
+			// Wrong password
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+
+	} else {
+		// Wrong username
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 }
 
 func GetGreeting(w http.ResponseWriter, r *http.Request) {
