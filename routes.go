@@ -5,14 +5,14 @@ var routes = Routes{
 		"Signup",
 		"POST",
 		"/api/signup",
-		Signup
+		Signup,
 	},
 	Route{
 		"Login",
 		"POST",
 		"/api/login",
-		Login
-	}
+		Login,
+	},
 	Route{
 		"Notes",
 		"GET",
