@@ -12,7 +12,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-var hmacSampleSecret = []byte("secret")
+var hmacSampleSecret = []byte(HmacSecret)
 
 func validate(username string) string {
 	expireToken := time.Now().Add(time.Minute * 1).Unix()
@@ -37,7 +37,6 @@ func validate(username string) string {
 
 func validateToken(tokenString string) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}

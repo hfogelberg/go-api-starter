@@ -33,8 +33,7 @@ http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Bat
 ### Log in
 $ http -f POST http://localhost:8081/api/login email=obi@gmail.com username=Obi password=password
 
-### Change username
-
+### Change user
 
 ### Remove user
 
@@ -46,4 +45,3 @@ $ http -f POST http://localhost:8081/api/login email=obi@gmail.com username=Obi 
 
 ### Todo
 - Status codes as constants
-- Settings in seperate file

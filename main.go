@@ -12,7 +12,7 @@ type Adapter func(http.Handler) http.Handler
 
 func main() {
 	// connect to the database
-	db, err := mgo.Dial("mongodb://localhost:27017")
+	db, err := mgo.Dial(MongoDBHost)
 	if err != nil {
 		log.Fatal("cannot dial mongo", err)
 	}

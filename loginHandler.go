@@ -31,7 +31,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	username := r.Form["username"][0]
 	password := r.Form["password"][0]
 
-	db := context.Get(r, "database").(*mgo.Session)
+	db := context.Get(r, MongoDb).(*mgo.Session)
 
 	// Check if username is already in use
 	user := User{}

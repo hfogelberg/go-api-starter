@@ -1,8 +1,5 @@
 .DS_Store
 
-# Config keys etc
-settings.go
-
 # Binary file
 go-api-starter
 

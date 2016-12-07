@@ -44,7 +44,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	user.HashedPassword = hashedPassword
 
 	// Hook up to Db
-	db := context.Get(r, "database").(*mgo.Session)
+	db := context.Get(r, MongoDb).(*mgo.Session)
 
 	// Check if username is already in use
 	err = db.DB("test").C("gousers").Find(bson.M{"username": user.Username}).One(&userInDb)
@@ -66,7 +66,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 
 	// Check if email is already in Db
 	log.Println("Now time to check email")
-	err = db.DB("test").C("gousers").Find(bson.M{"email": user.Email}).One(&userInDb)
+	err = db.DB(MongoDb).C("gousers").Find(bson.M{"email": user.Email}).One(&userInDb)
 	if err == nil {
 		log.Println("Email is already in Db")
 		ret := Retval{
@@ -84,7 +84,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// insert new user into the database and return token
-	if err := db.DB("test").C("gousers").Insert(&user); err != nil {
+	if err := db.DB(MongoDBHost).C("gousers").Insert(&user); err != nil {
 		log.Println("Failed insert")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
