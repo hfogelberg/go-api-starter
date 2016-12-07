@@ -27,19 +27,32 @@ To test the API I prefer to use [httpie](https://github.com/jkbrzt/httpie), whic
 
 ### Sign up
 ````
-http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Batman password=password
+$ http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Batman password=password
 ````
 
 ### Log in
-$ http -f POST http://localhost:8081/api/login email=obi@gmail.com username=Obi password=password
+````
+$ http -f POST http://localhost:3000/api/login email=obi@gmail.com username=Obi password=password
+````
 
 ### Change user
 
 ### Remove user
 
-### Get Notes by username
+### Create notes
+````
+$ http -f POST http://localhost:3000/api/noter username=obi text=Lorem Ipsum ...
+````
 
-### Get notes by Id
+### Get Notes by username
+````
+$ http GET http://localhost:3000/api/notes
+````
+
+### Get note by Id
+````
+$ http GET http://localhost:3000/api/notes/123
+````
 
 ### Update note
 
