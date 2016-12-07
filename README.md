@@ -31,10 +31,10 @@ http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Bat
 ````
 
 ### Log in
-
-### Log out
+$ http -f POST http://localhost:8081/api/login email=obi@gmail.com username=Obi password=password
 
 ### Change username
+
 
 ### Remove user
 
@@ -45,10 +45,5 @@ http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Bat
 ### Update note
 
 ### Todo
-- Clean up! The code is a mess today
-- Make DRY
 - Status codes as constants
 - Settings in seperate file
-- Structs (models) in seperate file
-- Log HTTP callse
-- Move JWT to own package?
