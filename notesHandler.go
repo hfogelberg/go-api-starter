@@ -11,7 +11,6 @@ import (
 )
 
 func handleNotes(w http.ResponseWriter, r *http.Request) {
-
 	switch r.Method {
 	case "POST":
 		createNote(w, r)

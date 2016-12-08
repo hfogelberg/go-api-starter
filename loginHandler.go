@@ -31,11 +31,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 	username := r.Form["username"][0]
 	password := r.Form["password"][0]
 
-	db := context.Get(r, MongoDb).(*mgo.Session)
+	db := context.Get(r, "database").(*mgo.Session)
 
 	// Check if username is already in use
 	user := User{}
-	err = db.DB("test").C("gousers").Find(bson.M{"username": username}).One(&user)
+	err = db.DB(MongoDb).C("gousers").Find(bson.M{"username": username}).One(&user)
 
 	log.Println("User is in Db", user.HashedPassword)
 	if user.Username != "" {

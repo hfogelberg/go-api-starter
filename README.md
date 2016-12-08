@@ -1,6 +1,7 @@
 #Go API Starter kit
 
 Basic starting point for building an API in Go.
+The API routes for notes require a valid JWT token. The token is returned when calling Sign up or Log in.
 
 ## Setup
 ### 1. Install Go packages
@@ -13,7 +14,7 @@ $ go gopkg.in/mgo.v2
 $ go gopkg.in/mgo.v2/bson
 ````
 ### 2. Configuration
-Todo
+Settings for Db server, database and jwt encryption secret are in config.go. Add this file to .gitingore when using production settings. DO NOT save production keys in Github.
 
 ### 3. Start server
 ````

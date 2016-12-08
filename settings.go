@@ -1,7 +1,8 @@
 package main
 
 const (
-	MongoDBHost = "mongodb://localhost:27017"
+	MongoDBHost = "mongodb://localhost"
 	MongoDb     = "test"
 	HmacSecret  = "secret"
+	Port        = ":3000"
 )
