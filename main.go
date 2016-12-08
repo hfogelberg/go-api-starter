@@ -28,7 +28,7 @@ func main() {
 	// add the handler
 	http.Handle("/user", context.ClearHandler(userHandler))
 	http.Handle("/login", context.ClearHandler(loginHandler))
-	http.Handle("/notes", context.ClearHandler(notesHandler))
+	http.Handle("/notes", jwtMiddleware.Handler(context.ClearHandler(notesHandler)))
 
 	// start the server
 	if err := http.ListenAndServe(":3000", nil); err != nil {
