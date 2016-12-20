@@ -6,15 +6,14 @@ The API routes for notes require a valid JWT token. The token is returned when c
 ## Setup
 ### 1. Install Go packages
 ````
-$ go get github.com/gorilla/mux
-$ go get github.com/gorilla/handlers
+$ go get github.com/julienschmidt/httprouter
 $ go get github.com/dgrijalva/jwt-go
 $ go golang.org/x/crypto/bcrypt
 $ go gopkg.in/mgo.v2
 $ go gopkg.in/mgo.v2/bson
 ````
 ### 2. Configuration
-Settings for Db server, database and jwt encryption secret are in config.go. Add this file to .gitingore when using production settings. DO NOT save production keys in Github.
+Settings for Db server, database and jwt encryption secret are in settings.go. Add this file to .gitingore when using production settings. DO NOT save production keys in Github.
 
 ### 3. Start server
 ````
@@ -23,39 +22,48 @@ $ go build
 $ go run ./go-api-starter
 ````
 
-##API calls
-To test the API I prefer to use [httpie](https://github.com/jkbrzt/httpie), which I find much easier to use than curl.
 
 ### Sign up
 ````
-$ http -f POST http://localhost:8081/api/signup email=batman@mail.com username=Batman password=password
+POST http://localhost:8081/api/signup
+Body: email, username, password
+Returns token
 ````
 
 ### Log in
 ````
-$ http -f POST http://localhost:3000/api/login email=obi@gmail.com username=Obi password=password
+POST http://localhost:3000/api/login
+Body: username, password
+Returns token
 ````
 
 ### Change user
+Todo
 
 ### Remove user
+Todo
 
 ### Create notes
 ````
-$ http -f POST http://localhost:3000/api/noter username=obi text=Lorem Ipsum ...
+POST: http://localhost:3000/api/notes
+Authentication: token
+Body: Text
 ````
 
 ### Get Notes by username
 ````
-$ http GET http://localhost:3000/api/notes
+GET http://localhost:3000/api/notes
+Authentication: token
 ````
 
 ### Get note by Id
 ````
-$ http GET http://localhost:3000/api/notes/123
+GET http://localhost:3000/api/notes/123
+Authentication: token
 ````
 
 ### Update note
+Todo
 
 ### Todo
 - Status codes as constants
