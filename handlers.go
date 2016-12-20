@@ -68,9 +68,6 @@ func (connection *Connection) Login(w http.ResponseWriter, r *http.Request, p ht
 func (connection *Connection) Signup(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	var user User
 
-	log.Println("Signup")
-
-	// Parse body and hash password
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -84,27 +81,17 @@ func (connection *Connection) Signup(w http.ResponseWriter, r *http.Request, p h
 	user.Username = r.Form["username"][0]
 	user.HashedPassword = hashedPassword
 
-	log.Println("User", user)
-
-	err = connection.Db.C("gousers").Insert(&user)
-	if err != nil {
-		log.Println("Failed insert")
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	saveOk := connection.SaveUser(user)
+	if saveOk == false {
+		// todo return error
+		log.Println("Error")
 	}
 
 	token := CreateToken(user.Username)
-	log.Println("We have a token!", token)
-
-	ret := Retval{
-		Status:  100,
-		Token:   token,
-		Message: "OK",
-	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(ret); err != nil {
+	if err := json.NewEncoder(w).Encode(token); err != nil {
 		panic(err)
 	}
 }
