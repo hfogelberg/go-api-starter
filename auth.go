@@ -8,8 +8,8 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func tokenIsValid(tokenString string) bool {
-	isValid := true
+func GetUsernameFromToken(tokenString string) string {
+	username := ""
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -22,12 +22,20 @@ func tokenIsValid(tokenString string) bool {
 		fmt.Println("Token validated")
 		fmt.Println(claims)
 		fmt.Println(claims["username"])
+		username = fmt.Sprintf("%s", claims["username"])
 	} else {
 		fmt.Println(err)
-		isValid = false
 	}
 
-	return isValid
+	return username
+
+	// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	// 	fmt.Println(claims)
+	// 	return {TokenIsValid: true, Username: claims["username"]}
+	// } else {
+	// 	fmt.Println(err)
+	// 	return {TokenIsValid: false, Username: ""}
+	// }
 }
 
 func CreateToken(username string) string {
