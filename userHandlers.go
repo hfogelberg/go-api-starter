@@ -6,11 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (connection *Connection) Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (connection *Connection) Login(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -54,7 +53,7 @@ func (connection *Connection) Login(w http.ResponseWriter, r *http.Request, p ht
 	}
 }
 
-func (connection *Connection) Signup(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (connection *Connection) Signup(w http.ResponseWriter, r *http.Request) {
 	var user User
 
 	// TODO Check that username and email is not in DB already

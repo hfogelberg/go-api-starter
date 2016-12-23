@@ -5,11 +5,9 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/julienschmidt/httprouter"
 )
 
-func (connection *Connection) CreateNote(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (connection *Connection) CreateNote(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -33,7 +31,7 @@ func (connection *Connection) CreateNote(w http.ResponseWriter, r *http.Request,
 	}
 }
 
-func (connection *Connection) GetNotes(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (connection *Connection) GetNotes(w http.ResponseWriter, r *http.Request) {
 
 	jwtString := r.Header.Get("Authorization")
 	log.Println("JWT: ", jwtString)
