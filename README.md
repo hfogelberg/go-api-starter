@@ -1,4 +1,4 @@
-#Go API Starter kit
+# Go API Starter kit
 
 Basic starting point for building an API in Go.
 The API routes for notes require a valid JWT token. The token is returned when calling Sign up or Log in.
